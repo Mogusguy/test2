@@ -3,8 +3,6 @@ import random
 import json
 import os
 
-app = Flask(test)
-
 # Function to load names from the JSON file
 def load_names():
     if os.path.exists("names.json"):
@@ -24,6 +22,17 @@ def reset_names():
     save_names(default_names)
     return default_names
 
+# Function to randomly select a name
+def random_name():
+    names = load_names()
+    if names:  # Check if names are not empty
+        return random.choice(names)
+    else:
+        return None  # Handle case where no names are present
+
+# Create Flask app instance
+app = Flask(__name__)
+
 # Route to render the main page
 @app.route('/')
 def index():
@@ -32,9 +41,9 @@ def index():
 # Route to generate a random name
 @app.route('/generate', methods=['POST'])
 def generate_name():
-    names = load_names()
-    if names:
-        return jsonify({"name": random.choice(names)})
+    name = random_name()
+    if name:
+        return jsonify({"name": name})
     else:
         return jsonify({"error": "No names available!"})
 
@@ -50,5 +59,7 @@ def add_name():
             return redirect('/')
     return redirect('/')
 
+# Run the app
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
