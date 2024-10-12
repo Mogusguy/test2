@@ -3,7 +3,7 @@ import random
 import json
 import os
 
-app = Flask(__name__)
+app = Flask(test)
 
 # Function to load names from the JSON file
 def load_names():
